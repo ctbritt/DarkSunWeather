@@ -79,11 +79,16 @@ export function WeatherProvider({ children }: WeatherProviderProps) {
   // Direct action methods that don't depend on closures
   const updateParams = useCallback((newParams: Partial<WeatherParameters>) => {
     console.log('updateParams called with:', newParams);
-    setWeatherParams(prev => ({
-      ...prev,
-      ...newParams
-    }));
-  }, []);
+    console.log('Current weatherParams before update:', weatherParams);
+    setWeatherParams(prev => {
+      const updatedParams = {
+        ...prev,
+        ...newParams
+      };
+      console.log('Updated weatherParams will be:', updatedParams);
+      return updatedParams;
+    });
+  }, [weatherParams]);
   
   const changeTab = useCallback((tab: "weatherGenerator" | "timeline" | "encounters" | "savedPatterns" | "settings") => {
     console.log('changeTab called with:', tab);

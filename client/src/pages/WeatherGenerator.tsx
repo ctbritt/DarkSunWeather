@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 
 export default function WeatherGenerator() {
+  console.log('WeatherGenerator component rendering');
   const { toast } = useToast();
   const { weatherParams, setWeatherParams, weatherData, setWeatherData, currentWeather, setCurrentWeather, updateParams } = useWeather();
   
