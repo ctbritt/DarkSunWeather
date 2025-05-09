@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 
 export default function WeatherGenerator() {
   const { toast } = useToast();
-  const { weatherParams, setWeatherParams, weatherData, setWeatherData, currentWeather, setCurrentWeather } = useWeather();
+  const { weatherParams, setWeatherParams, weatherData, setWeatherData, currentWeather, setCurrentWeather, updateParams } = useWeather();
   
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -161,19 +161,15 @@ export default function WeatherGenerator() {
   // Handle increment/decrement days
   const handleIncrementDays = () => {
     if (weatherParams.days < 30) {
-      setWeatherParams({
-        ...weatherParams,
-        days: weatherParams.days + 1
-      });
+      console.log('Incrementing days');
+      updateParams({ days: weatherParams.days + 1 });
     }
   };
   
   const handleDecrementDays = () => {
     if (weatherParams.days > 1) {
-      setWeatherParams({
-        ...weatherParams,
-        days: weatherParams.days - 1
-      });
+      console.log('Decrementing days');
+      updateParams({ days: weatherParams.days - 1 });
     }
   };
   
@@ -226,28 +222,28 @@ export default function WeatherGenerator() {
               <label className="block text-sm font-medium mb-2">Season</label>
               <div className="grid grid-cols-2 gap-3">
                 <Button 
-                  onClick={() => setWeatherParams({...weatherParams, season: "High Sun"})}
+                  onClick={() => updateParams({ season: "High Sun" })}
                   className={weatherParams.season === "High Sun" ? "bg-primary text-white" : "bg-background hover:bg-gray-800 text-sand"}
                   size="sm"
                 >
                   High Sun
                 </Button>
                 <Button 
-                  onClick={() => setWeatherParams({...weatherParams, season: "Low Sun"})}
+                  onClick={() => updateParams({ season: "Low Sun" })}
                   className={weatherParams.season === "Low Sun" ? "bg-primary text-white" : "bg-background hover:bg-gray-800 text-sand"}
                   size="sm"
                 >
                   Low Sun
                 </Button>
                 <Button 
-                  onClick={() => setWeatherParams({...weatherParams, season: "Ascending Sun"})}
+                  onClick={() => updateParams({ season: "Ascending Sun" })}
                   className={weatherParams.season === "Ascending Sun" ? "bg-primary text-white" : "bg-background hover:bg-gray-800 text-sand"}
                   size="sm"
                 >
                   Ascending Sun
                 </Button>
                 <Button 
-                  onClick={() => setWeatherParams({...weatherParams, season: "Descending Sun"})}
+                  onClick={() => updateParams({ season: "Descending Sun" })}
                   className={weatherParams.season === "Descending Sun" ? "bg-primary text-white" : "bg-background hover:bg-gray-800 text-sand"}
                   size="sm"
                 >
@@ -270,7 +266,7 @@ export default function WeatherGenerator() {
                 max={5}
                 step={1}
                 className="w-full"
-                onValueChange={(value) => setWeatherParams({...weatherParams, temperatureTendency: value[0]})}
+                onValueChange={(value) => updateParams({ temperatureTendency: value[0] })}
               />
             </div>
             
@@ -288,7 +284,7 @@ export default function WeatherGenerator() {
                 max={5}
                 step={1}
                 className="w-full"
-                onValueChange={(value) => setWeatherParams({...weatherParams, windIntensity: value[0]})}
+                onValueChange={(value) => updateParams({ windIntensity: value[0] })}
               />
             </div>
             
@@ -306,7 +302,7 @@ export default function WeatherGenerator() {
                 max={5}
                 step={1}
                 className="w-full"
-                onValueChange={(value) => setWeatherParams({...weatherParams, specialEventProbability: value[0]})}
+                onValueChange={(value) => updateParams({ specialEventProbability: value[0] })}
               />
             </div>
             
@@ -326,7 +322,7 @@ export default function WeatherGenerator() {
                   min={1}
                   max={30}
                   className="bg-background border-y border-gray-700 h-8 w-16 text-center text-sand rounded-none"
-                  onChange={(e) => setWeatherParams({...weatherParams, days: parseInt(e.target.value) || 1})}
+                  onChange={(e) => updateParams({ days: parseInt(e.target.value) || 1 })}
                 />
                 <button 
                   className="bg-gray-700 hover:bg-gray-600 text-sand h-8 w-8 flex items-center justify-center rounded-r-lg"

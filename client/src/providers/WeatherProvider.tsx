@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { WeatherParameters, WeatherData, Region, Season } from "../types/weather";
 import { initDatabase, getSettings, saveSettings } from "@/lib/weatherStorage";
 
@@ -10,7 +10,7 @@ interface WeatherContextType {
   
   // Weather parameters
   weatherParams: WeatherParameters;
-  setWeatherParams: (params: WeatherParameters) => void;
+  setWeatherParams: (params: WeatherParameters | ((prev: WeatherParameters) => WeatherParameters)) => void;
   
   // Weather data
   weatherData: WeatherData[];
@@ -23,27 +23,36 @@ interface WeatherContextType {
   // Dark mode toggle
   darkMode: boolean;
   setDarkMode: (enabled: boolean) => void;
+  
+  // Direct action methods
+  updateParams: (newParams: Partial<WeatherParameters>) => void;
+  changeTab: (tab: "weatherGenerator" | "timeline" | "encounters" | "savedPatterns" | "settings") => void;
 }
 
-// Create the context with default values to ensure proper typing
+// Default weather parameters
+const defaultWeatherParams: WeatherParameters = {
+  region: "Tablelands",
+  season: "High Sun",
+  temperatureTendency: 3,
+  windIntensity: 3,
+  specialEventProbability: 3,
+  days: 7
+};
+
+// Create the context with default values
 export const WeatherContext = createContext<WeatherContextType>({
   activeTab: "weatherGenerator",
   setActiveTab: () => {},
-  weatherParams: {
-    region: "Tablelands",
-    season: "High Sun",
-    temperatureTendency: 3,
-    windIntensity: 3,
-    specialEventProbability: 3,
-    days: 7
-  },
+  weatherParams: defaultWeatherParams,
   setWeatherParams: () => {},
   weatherData: [],
   setWeatherData: () => {},
   currentWeather: null,
   setCurrentWeather: () => {},
   darkMode: true,
-  setDarkMode: () => {}
+  setDarkMode: () => {},
+  updateParams: () => {},
+  changeTab: () => {}
 });
 
 // Define props for weather provider
@@ -52,19 +61,14 @@ interface WeatherProviderProps {
 }
 
 export function WeatherProvider({ children }: WeatherProviderProps) {
+  console.log('WeatherProvider rendering');
+  
   // Set up state
   const [activeTab, setActiveTab] = useState<"weatherGenerator" | "timeline" | "encounters" | "savedPatterns" | "settings">("weatherGenerator");
   const [darkMode, setDarkMode] = useState<boolean>(true);
   
   // Weather parameters state with default values
-  const [weatherParams, setWeatherParams] = useState<WeatherParameters>({
-    region: "Tablelands",
-    season: "High Sun",
-    temperatureTendency: 3, // Normal
-    windIntensity: 3, // Normal
-    specialEventProbability: 3, // Standard
-    days: 7
-  });
+  const [weatherParams, setWeatherParams] = useState<WeatherParameters>(defaultWeatherParams);
   
   // Weather data state
   const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
@@ -72,16 +76,34 @@ export function WeatherProvider({ children }: WeatherProviderProps) {
   // Current weather state (selected day)
   const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
   
+  // Direct action methods that don't depend on closures
+  const updateParams = useCallback((newParams: Partial<WeatherParameters>) => {
+    console.log('updateParams called with:', newParams);
+    setWeatherParams(prev => ({
+      ...prev,
+      ...newParams
+    }));
+  }, []);
+  
+  const changeTab = useCallback((tab: "weatherGenerator" | "timeline" | "encounters" | "savedPatterns" | "settings") => {
+    console.log('changeTab called with:', tab);
+    setActiveTab(tab);
+  }, []);
+  
   // Initialize the database and load settings on mount
   useEffect(() => {
+    let isMounted = true;
+    
     async function initialize() {
       try {
         // Initialize the IndexedDB database
         await initDatabase();
         
+        if (!isMounted) return;
+        
         // Try to load saved settings
         const settings = await getSettings();
-        if (settings) {
+        if (settings && isMounted) {
           // Apply saved settings if they exist
           if (settings.weatherParams) {
             setWeatherParams(settings.weatherParams);
@@ -95,7 +117,12 @@ export function WeatherProvider({ children }: WeatherProviderProps) {
       }
     }
     
+    console.log('Running initialization effect');
     initialize();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
   
   // Save settings when they change
@@ -111,7 +138,12 @@ export function WeatherProvider({ children }: WeatherProviderProps) {
       }
     };
     
-    saveUserSettings();
+    const timeoutId = setTimeout(() => {
+      console.log('Saving settings');
+      saveUserSettings();
+    }, 1000);
+    
+    return () => clearTimeout(timeoutId);
   }, [weatherParams, darkMode]);
   
   // Provide the context value
@@ -125,7 +157,9 @@ export function WeatherProvider({ children }: WeatherProviderProps) {
     currentWeather,
     setCurrentWeather,
     darkMode,
-    setDarkMode
+    setDarkMode,
+    updateParams,
+    changeTab
   };
   
   return (
