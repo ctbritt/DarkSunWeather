@@ -2,20 +2,20 @@ import { WeatherData, WeatherEvent, WindCondition, Region, Season } from "../typ
 
 // Temperature ranges for each season (min, max in °C)
 const seasonTemperatureRanges = {
-  "High Sun": [40, 50],
-  "Low Sun": [25, 35],
-  "Ascending Sun": [30, 45],
-  "Descending Sun": [35, 45],
+  "High Sun": [45, 55],
+  "Low Sun": [30, 40],
+  "Ascending Sun": [35, 50],
+  "Descending Sun": [40, 50],
 };
 
 // Region temperature modifiers
 const regionTemperatureModifiers = {
   "Tablelands": 0,
-  "Sea of Silt": 2,
-  "Ringing Mountains": -5,
-  "Forest Ridge": -3,
-  "Jagged Cliffs": -2,
-  "Tyr Valley": 1,
+  "Sea of Silt": 3,
+  "Ringing Mountains": -3,
+  "Forest Ridge": -2,
+  "Jagged Cliffs": -1,
+  "Tyr Valley": 2,
 };
 
 // Wind condition probabilities by region
@@ -115,15 +115,15 @@ const eventProbabilityModifiers = {
 
 // Temperature condition description based on temperature
 function getTemperatureCondition(temperature: number): string {
-  if (temperature >= 48) return "Deadly Heat";
-  if (temperature >= 45) return "Blistering Heat";
-  if (temperature >= 40) return "Extreme Heat";
+  if (temperature >= 55) return "Deadly Heat";
+  if (temperature >= 50) return "Blistering Heat";
+  if (temperature >= 45) return "Extreme Heat";
+  if (temperature >= 40) return "Scorching";
   if (temperature >= 35) return "Hot";
   if (temperature >= 30) return "Warm";
   if (temperature >= 25) return "Mild";
   if (temperature >= 20) return "Cool";
-  if (temperature >= 15) return "Cold";
-  if (temperature < 15) return "Freezing";
+  if (temperature < 20) return "Cold";
   return "Unknown";
 }
 
@@ -183,13 +183,28 @@ function getWeatherTags(temperature: number, windCondition: WindCondition, speci
   const tags: string[] = [];
   
   // Temperature tags
-  if (temperature >= 45) tags.push("Exhaustion Risk");
-  if (temperature >= 40 && temperature < 45) tags.push("Heat Danger");
-  if (temperature <= 15) tags.push("Cold Danger");
+  if (temperature >= 50) {
+    tags.push("Exhaustion Risk");
+    tags.push("Deadly Heat");
+  } else if (temperature >= 45 && temperature < 50) {
+    tags.push("Heat Danger");
+    tags.push("Extreme Heat");
+  } else if (temperature >= 40 && temperature < 45) {
+    tags.push("Heat Stress");
+    tags.push("Scorching");
+  } else if (temperature <= 20) {
+    tags.push("Cold Danger");
+    tags.push("Hypothermia Risk");
+  }
   
   // Wind tags
-  if (windCondition === "Strong") tags.push("Navigation Penalty");
-  if (windCondition === "Violent") tags.push("Combat Penalty");
+  if (windCondition === "Strong") {
+    tags.push("Navigation Penalty");
+    tags.push("Strong Winds");
+  } else if (windCondition === "Violent") {
+    tags.push("Combat Penalty");
+    tags.push("Violent Winds");
+  }
   
   // Special event tags
   if (specialEvent) {
@@ -197,14 +212,17 @@ function getWeatherTags(temperature: number, windCondition: WindCondition, speci
     
     if (specialEvent === "Dust Storm" || specialEvent === "Silt Storm") {
       tags.push("Low Visibility");
+      tags.push("Breathing Hazard");
     }
     
     if (specialEvent === "Heat Wave") {
       tags.push("Dehydration Risk");
+      tags.push("Heat Stress");
     }
     
     if (specialEvent === "Lightning Storm") {
       tags.push("Lightning Danger");
+      tags.push("Storm Hazard");
     }
   }
   

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import WeatherCard from "@/components/WeatherCard";
+import { formatTemperature } from "@/lib/temperature";
 
 export default function Timeline() {
   const { weatherData, currentWeather, setCurrentWeather } = useWeather();
@@ -55,11 +56,11 @@ export default function Timeline() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-background p-4 rounded-lg">
               <div className="text-gray-400 text-sm mb-1">Average Temperature</div>
-              <div className="text-xl font-mono">{averageTemp}°C</div>
+              <div className="text-xl font-mono">{formatTemperature(averageTemp)}</div>
             </div>
             <div className="bg-background p-4 rounded-lg">
               <div className="text-gray-400 text-sm mb-1">Temperature Range</div>
-              <div className="text-xl font-mono">{minTemp}°C - {maxTemp}°C</div>
+              <div className="text-xl font-mono">{formatTemperature(minTemp)} - {formatTemperature(maxTemp)}</div>
             </div>
             <div className="bg-background p-4 rounded-lg">
               <div className="text-gray-400 text-sm mb-1">Special Events</div>
@@ -106,7 +107,7 @@ export default function Timeline() {
                     {weatherData.map((day, index) => (
                       <TableRow key={index}>
                         <TableCell>{day.day}</TableCell>
-                        <TableCell>{day.temperature}°C ({day.temperatureCondition})</TableCell>
+                        <TableCell>{formatTemperature(day.temperature)} ({day.temperatureCondition})</TableCell>
                         <TableCell>{day.windCondition} {day.windDirection}</TableCell>
                         <TableCell>
                           {day.specialEvent || "None"}
@@ -173,19 +174,19 @@ export default function Timeline() {
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <span>Average Temperature:</span>
-                        <span className="font-mono">{averageTemp}°C</span>
+                        <span className="font-mono">{formatTemperature(averageTemp)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Maximum Temperature:</span>
-                        <span className="font-mono">{maxTemp}°C</span>
+                        <span className="font-mono">{formatTemperature(maxTemp)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Minimum Temperature:</span>
-                        <span className="font-mono">{minTemp}°C</span>
+                        <span className="font-mono">{formatTemperature(minTemp)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Temperature Variance:</span>
-                        <span className="font-mono">{maxTemp - minTemp}°C</span>
+                        <span className="font-mono">{formatTemperature(maxTemp - minTemp)}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -206,7 +207,7 @@ export default function Timeline() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-background p-4 rounded-lg">
                 <div className="text-gray-400 text-sm mb-1">Temperature</div>
-                <div className="text-xl font-mono">{currentWeather.temperature}°C</div>
+                <div className="text-xl font-mono">{formatTemperature(currentWeather.temperature)}</div>
                 <div className="text-sm text-gray-400">{currentWeather.temperatureCondition}</div>
               </div>
               <div className="bg-background p-4 rounded-lg">

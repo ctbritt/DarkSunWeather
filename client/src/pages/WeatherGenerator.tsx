@@ -15,6 +15,7 @@ import { WeatherData, Region, Season } from "@/types/weather";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { formatTemperature } from "@/lib/temperature";
 
 export default function WeatherGenerator() {
   console.log('WeatherGenerator component rendering');
@@ -393,7 +394,7 @@ export default function WeatherGenerator() {
             <div className="bg-surface rounded-xl p-6 shadow-lg mb-6">
               <h2 className="font-heading text-2xl mb-4 text-primary">Current Weather</h2>
               <div className="flex items-center mb-6">
-                <div className="text-6xl font-mono text-warning mr-3">{currentWeather.temperature}°C</div>
+                <div className="text-6xl font-mono text-warning mr-3">{formatTemperature(currentWeather.temperature)}</div>
                 <div className="border-l border-gray-700 pl-3">
                   <div className="text-xl font-medium">{currentWeather.temperatureCondition}</div>
                   <div className="text-gray-400">Day {currentWeather.day} of {currentWeather.season}</div>

@@ -1,4 +1,5 @@
 import { WeatherData } from "@/types/weather";
+import { formatTemperature } from "@/lib/temperature";
 
 interface WeatherCardProps {
   weather: WeatherData;
@@ -33,7 +34,7 @@ export default function WeatherCard({ weather, onClick }: WeatherCardProps) {
     >
       <div className="text-sm font-medium mb-1">Day {weather.day}</div>
       <div className="text-xs text-gray-400 mb-3">{weather.season}</div>
-      <div className="text-xl font-mono mb-3">{weather.temperature}°C</div>
+      <div className="text-xl font-mono mb-3">{formatTemperature(weather.temperature)}</div>
       <div className="flex items-center text-sm mb-2">
         <span className="material-icons text-sand text-sm mr-1">air</span>
         <span>{weather.windCondition}</span>

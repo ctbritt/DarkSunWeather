@@ -1,4 +1,5 @@
 import { WeatherData } from "@/types/weather";
+import { formatTemperature } from "@/lib/temperature";
 
 interface TemperatureTrendChartProps {
   weatherData: WeatherData[];
@@ -65,7 +66,7 @@ export default function TemperatureTrendChart({ weatherData }: TemperatureTrendC
                 
                 {/* Temperature Label */}
                 <div className="absolute transform -translate-x-1/2 top-[-15px] text-xs">
-                  {data.temperature}°
+                  {formatTemperature(data.temperature)}
                 </div>
                 
                 {/* Day Label */}

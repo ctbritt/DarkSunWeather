@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatTemperature } from "@/lib/temperature";
 
 export default function Encounters() {
   const { weatherData, weatherParams } = useWeather();
@@ -197,7 +198,7 @@ export default function Encounters() {
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="bg-background p-3 rounded-lg">
                                   <div className="text-sm text-gray-400">Temperature</div>
-                                  <div>{getWeatherDay(selectedEncounter.day)?.temperature}°C ({getWeatherDay(selectedEncounter.day)?.temperatureCondition})</div>
+                                  <div>{formatTemperature(getWeatherDay(selectedEncounter.day)?.temperature || 0)} ({getWeatherDay(selectedEncounter.day)?.temperatureCondition})</div>
                                 </div>
                                 <div className="bg-background p-3 rounded-lg">
                                   <div className="text-sm text-gray-400">Wind</div>

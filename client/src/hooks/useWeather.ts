@@ -5,7 +5,7 @@ import { WeatherContext } from "../providers/WeatherProvider";
 export function useWeather() {
   const context = useContext(WeatherContext);
   
-  if (!context || typeof context.setActiveTab !== 'function') {
+  if (!context || typeof context.changeTab !== 'function') {
     console.error("Weather context is not properly initialized or missing functions");
     throw new Error("useWeather must be used within a WeatherProvider");
   }
