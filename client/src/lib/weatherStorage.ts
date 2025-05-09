@@ -218,7 +218,7 @@ export function saveWeatherPattern(pattern: SavedWeatherPattern): Promise<number
       body: JSON.stringify(pattern),
       headers: { 'Content-Type': 'application/json' }
     })
-      .then(response => {
+      .then((response: any) => {
         // Also save to local IndexedDB for offline access
         saveToIndexedDB(pattern);
         return response.id;
@@ -275,7 +275,7 @@ export function getAllWeatherPatterns(): Promise<SavedWeatherPattern[]> {
   // Try to get from server if online
   if (isOnline) {
     return apiRequest('/api/weather-patterns')
-      .then(response => {
+      .then((response: SavedWeatherPattern[]) => {
         // Update local IndexedDB with server data
         updateLocalPatterns(response);
         return response;
@@ -354,7 +354,7 @@ export function getWeatherPatternById(id: number): Promise<SavedWeatherPattern |
   // Try to get from server if online
   if (isOnline) {
     return apiRequest(`/api/weather-patterns/${id}`)
-      .then(response => {
+      .then((response: SavedWeatherPattern) => {
         return response;
       })
       .catch(error => {
