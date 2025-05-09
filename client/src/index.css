@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 10%;
+  --foreground: 20 14.3% 95.9%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 60.7%;
+  --popover: 0 0% 15%;
+  --popover-foreground: 20 14.3% 95.9%;
+  --card: 0 0% 15%;
+  --card-foreground: 20 14.3% 95.9%;
+  --border: 20 5.9% 30%;
+  --input: 20 5.9% 30%;
+  --primary: 24 90% 45%;
+  --primary-foreground: 60 9.1% 97.8%;
+  --secondary: 10 3.9% 19.6%;
+  --secondary-foreground: 24 9.8% 90%;
+  --accent: 60 4.8% 19.6%;
+  --accent-foreground: 24 9.8% 90%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --danger: 0 84.2% 60.2%;
+  --warning: 38 92.7% 50.2%;
+  --ring: 24 90% 45%;
+  --radius: 0.5rem;
+  --sand: 43 47.1% 70.2%;
+  
+  --sidebar-background: 0 0% 7.8%;
+  --sidebar-foreground: 20 14.3% 95.9%;
+  --sidebar-primary: 24 90% 45%;
+  --sidebar-primary-foreground: 60 9.1% 97.8%;
+  --sidebar-accent: 60 4.8% 19.6%;
+  --sidebar-accent-foreground: 24 9.8% 90%;
+  --sidebar-border: 20 5.9% 20%;
+  --sidebar-ring: 24 90% 45%;
+  
+  --chart-1: 24 90% 45%;
+  --chart-2: 38 92.7% 50.2%;
+  --chart-3: 0 84.2% 60.2%;
+  --chart-4: 160 84.2% 50.2%;
+  --chart-5: 216 90% 60.2%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom styling for the weather app */
+.weather-card {
+  transition: transform 0.3s ease;
+}
+
+.weather-card:hover {
+  transform: translateY(-5px);
+}
+
+.sand-dust {
+  position: absolute;
+  background-image: radial-gradient(circle, rgba(210, 180, 140, 0.1) 10%, transparent 10.5%);
+  background-size: 15px 15px;
+  pointer-events: none;
+  opacity: 0.5;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* Add sand dust pattern overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(210, 180, 140, 0.07) 10%, transparent 10.5%);
+  background-size: 15px 15px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Material icons support */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+}
+
+/* Adjust text colors for Dark Sun theme */
+.text-sand {
+  color: hsl(43, 47.1%, 70.2%);
+}
+
+.text-danger {
+  color: hsl(0, 84.2%, 60.2%);
+}
+
+.text-warning {
+  color: hsl(38, 92.7%, 50.2%);
+}
+
+.bg-danger {
+  background-color: hsl(0, 84.2%, 60.2%);
+}
+
+.bg-warning {
+  background-color: hsl(38, 92.7%, 50.2%);
+}
+
+.border-danger {
+  border-color: hsl(0, 84.2%, 60.2%);
+}
+
+.border-warning {
+  border-color: hsl(38, 92.7%, 50.2%);
+}
+
+.border-primary {
+  border-color: hsl(24, 90%, 45%);
+}
