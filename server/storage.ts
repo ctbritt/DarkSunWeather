@@ -1,7 +1,6 @@
-import { users, type User, type InsertUser, type WeatherPattern } from "@shared/schema";
-
-// modify the interface with any CRUD methods
-// you might need
+import { users, weatherPatterns, type User, type InsertUser, type WeatherPattern, type InsertWeatherPattern } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -12,76 +11,70 @@ export interface IStorage {
   // Weather pattern methods
   getAllWeatherPatterns(): Promise<WeatherPattern[]>;
   getWeatherPatternById(id: number): Promise<WeatherPattern | undefined>;
-  createWeatherPattern(pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern>;
-  updateWeatherPattern(id: number, pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern>;
+  createWeatherPattern(pattern: InsertWeatherPattern): Promise<WeatherPattern>;
+  updateWeatherPattern(id: number, pattern: InsertWeatherPattern): Promise<WeatherPattern>;
   deleteWeatherPattern(id: number): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private weatherPatterns: Map<number, WeatherPattern>;
-  currentId: number;
-  weatherPatternId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.weatherPatterns = new Map();
-    this.currentId = 1;
-    this.weatherPatternId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   // Weather pattern methods
   async getAllWeatherPatterns(): Promise<WeatherPattern[]> {
-    return Array.from(this.weatherPatterns.values());
+    return await db.select().from(weatherPatterns);
   }
 
   async getWeatherPatternById(id: number): Promise<WeatherPattern | undefined> {
-    return this.weatherPatterns.get(id);
+    const [pattern] = await db.select().from(weatherPatterns).where(eq(weatherPatterns.id, id));
+    return pattern;
   }
 
-  async createWeatherPattern(pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern> {
-    const id = this.weatherPatternId++;
-    const newPattern = { ...pattern, id } as WeatherPattern;
-    this.weatherPatterns.set(id, newPattern);
+  async createWeatherPattern(pattern: InsertWeatherPattern): Promise<WeatherPattern> {
+    const [newPattern] = await db
+      .insert(weatherPatterns)
+      .values(pattern)
+      .returning();
     return newPattern;
   }
 
-  async updateWeatherPattern(id: number, pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern> {
-    const existingPattern = this.weatherPatterns.get(id);
-    if (!existingPattern) {
+  async updateWeatherPattern(id: number, pattern: InsertWeatherPattern): Promise<WeatherPattern> {
+    const [updatedPattern] = await db
+      .update(weatherPatterns)
+      .set(pattern)
+      .where(eq(weatherPatterns.id, id))
+      .returning();
+    
+    if (!updatedPattern) {
       throw new Error(`Weather pattern with id ${id} not found`);
     }
     
-    const updatedPattern = { ...pattern, id } as WeatherPattern;
-    this.weatherPatterns.set(id, updatedPattern);
     return updatedPattern;
   }
 
   async deleteWeatherPattern(id: number): Promise<void> {
-    if (!this.weatherPatterns.has(id)) {
-      throw new Error(`Weather pattern with id ${id} not found`);
-    }
+    const result = await db
+      .delete(weatherPatterns)
+      .where(eq(weatherPatterns.id, id));
     
-    this.weatherPatterns.delete(id);
+    // Neon doesn't return the number of rows affected, so we can't check if anything was deleted
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

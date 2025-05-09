@@ -114,6 +114,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to delete weather pattern' });
     }
   });
+  
+  // Import multiple weather patterns
+  app.post('/api/weather-patterns/import', async (req, res) => {
+    try {
+      const patterns = req.body;
+      
+      if (!Array.isArray(patterns)) {
+        return res.status(400).json({ message: 'Invalid format - expected an array of weather patterns' });
+      }
+      
+      const importedPatterns: WeatherPattern[] = [];
+      
+      for (const pattern of patterns) {
+        const validationResult = insertWeatherPatternSchema.safeParse(pattern);
+        
+        if (validationResult.success) {
+          const createdPattern = await storage.createWeatherPattern(validationResult.data);
+          importedPatterns.push(createdPattern);
+        }
+      }
+      
+      res.status(201).json({ 
+        message: `Successfully imported ${importedPatterns.length} of ${patterns.length} patterns`,
+        importedPatterns 
+      });
+    } catch (error) {
+      console.error('Error importing weather patterns:', error);
+      res.status(500).json({ message: 'Failed to import weather patterns' });
+    }
+  });
 
   const httpServer = createServer(app);
 
