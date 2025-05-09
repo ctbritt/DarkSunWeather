@@ -1,12 +1,20 @@
-import { users, type User, type InsertUser } from "@shared/schema";
+import { users, type User, type InsertUser, type WeatherPattern } from "@shared/schema";
 
 // modify the interface with any CRUD methods
 // you might need
 
 export interface IStorage {
+  // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Weather pattern methods
+  getAllWeatherPatterns(): Promise<WeatherPattern[]>;
+  getWeatherPatternById(id: number): Promise<WeatherPattern | undefined>;
+  createWeatherPattern(pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern>;
+  updateWeatherPattern(id: number, pattern: Omit<WeatherPattern, 'id'>): Promise<WeatherPattern>;
+  deleteWeatherPattern(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {

@@ -25,8 +25,26 @@ interface WeatherContextType {
   setDarkMode: (enabled: boolean) => void;
 }
 
-// Create the context
-export const WeatherContext = createContext<WeatherContextType>({} as WeatherContextType);
+// Create the context with default values to ensure proper typing
+export const WeatherContext = createContext<WeatherContextType>({
+  activeTab: "weatherGenerator",
+  setActiveTab: () => {},
+  weatherParams: {
+    region: "Tablelands",
+    season: "High Sun",
+    temperatureTendency: 3,
+    windIntensity: 3,
+    specialEventProbability: 3,
+    days: 7
+  },
+  setWeatherParams: () => {},
+  weatherData: [],
+  setWeatherData: () => {},
+  currentWeather: null,
+  setCurrentWeather: () => {},
+  darkMode: true,
+  setDarkMode: () => {}
+});
 
 // Define props for weather provider
 interface WeatherProviderProps {
