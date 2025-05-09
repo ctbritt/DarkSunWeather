@@ -79,7 +79,7 @@ export default function WeatherGenerator() {
   
   // Reset parameters to default values
   const handleResetParameters = () => {
-    setWeatherParams({
+    updateParams({
       region: "Tablelands",
       season: "High Sun",
       temperatureTendency: 3,
@@ -201,7 +201,7 @@ export default function WeatherGenerator() {
               <label className="block text-sm font-medium mb-2">Region</label>
               <Select 
                 value={weatherParams.region} 
-                onValueChange={(value) => setWeatherParams({...weatherParams, region: value as Region})}
+                onValueChange={(value) => updateParams({ region: value as Region })}
               >
                 <SelectTrigger className="w-full bg-background border border-gray-700 rounded-lg p-2 text-sand">
                   <SelectValue placeholder="Select region" />
